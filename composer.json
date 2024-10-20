@@ -1,0 +1,33 @@
+{
+    "name": "corerely/messenger-monitor-bundle",
+    "description": "Monitor messenger messages",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Corerely\\MessengerMonitorBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Corerely\\MessengerMonitorBundle\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Andrii Oprysko",
+            "email": "anjey.link@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^8.2",
+        "doctrine/orm": "*"
+    },
+    "require-dev": {
+    },
+    "config": {
+        "allow-plugins": true
+    }
+}
