@@ -23,7 +23,9 @@
     "prefer-stable": true,
     "require": {
         "php": "^8.2",
-        "doctrine/orm": "*"
+        "doctrine/orm": "*",
+        "symfony/framework-bundle": "^6.0|^7.0",
+        "symfony/http-foundation": "^6.0|^7.0"
     },
     "require-dev": {
     },

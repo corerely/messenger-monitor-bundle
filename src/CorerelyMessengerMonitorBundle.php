@@ -5,7 +5,7 @@ namespace Corerely\MessengerMonitorBundle;
 
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
-class MessengerMonitorBundle extends AbstractBundle
+class CorerelyMessengerMonitorBundle extends AbstractBundle
 {
 
 }
