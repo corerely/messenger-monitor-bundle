@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Corerely\MessengerMonitoreBundle;
+namespace Corerely\MessengerMonitorBundle;
 
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
