@@ -1,0 +1,17 @@
+{
+  "name": "messenger-monitor-bundle",
+  "version": "1.0.0",
+  "description": "Dashboard to monitor and manage messages in Symfony Messenger.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.4.14"
+  },
+  "dependencies": {
+    "flowbite": "^2.5.2"
+  }
+}
