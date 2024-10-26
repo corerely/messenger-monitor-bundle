@@ -19,7 +19,7 @@ final readonly class FailedMessageRetryer
     ) {
     }
 
-    public function retryFailedMessage(int|string $id): void
+    public function retry(int|string $id): void
     {
         $this->eventDispatcher->addSubscriber($subscriber = new StopWorkerOnMessageLimitListener(1));
 
@@ -43,5 +43,17 @@ final readonly class FailedMessageRetryer
 
         $this->eventDispatcher->removeSubscriber($subscriber);
     }
-}
 
+    public function reject(int|string $id): void
+    {
+        $failureReceiver = $this->failureReceiverProvider->getFailureReceiver();
+
+        $envelope = $failureReceiver->find($id);
+
+        if (null === $envelope) {
+            throw new \RuntimeException(\sprintf('The message with id "%s" was not found.', $id));
+        }
+
+        $failureReceiver->reject($envelope);
+    }
+}

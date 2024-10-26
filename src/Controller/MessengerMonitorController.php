@@ -51,12 +51,32 @@ abstract class MessengerMonitorController extends AbstractController
         $sessionBag = $requestStack->getSession()->getBag('flashes');
 
         try {
-            $failedMessageRetryer->retryFailedMessage($id);
+            $failedMessageRetryer->retry($id);
             $sessionBag->add('corerely.messenger_monitor.success', \sprintf('Message with id "%s" correctly retried.', $id));
         } catch (\Exception $exception) {
             $sessionBag->add('corerely.messenger_monitor.error', \sprintf('Error while retrying message with id "%s": %s', $id, $exception->getMessage()));
         }
 
+
+        return $this->redirectToRoute('corerely.messenger_monitor.dashboard');
+    }
+
+    #[Route('/failed/reject/{id}', name: 'corerely.messenger_monitor.failed_message.reject', methods: ['POST'])]
+    public function reject(
+        string               $id,
+        RequestStack         $requestStack,
+
+        #[Autowire(service: 'corerely.messenger_monitor_bundle.failed_message_retryer')]
+        FailedMessageRetryer $failedMessageRetryer,
+    ): Response {
+        $sessionBag = $requestStack->getSession()->getBag('flashes');
+
+        try {
+            $failedMessageRetryer->reject($id);
+            $sessionBag->add('corerely.messenger_monitor.success', \sprintf('Message with id "%s" correctly rejected.', $id));
+        } catch (\Exception $exception) {
+            $sessionBag->add('corerely.messenger_monitor.error', \sprintf('Error while rejecting message with id "%s": %s', $id, $exception->getMessage()));
+        }
 
         return $this->redirectToRoute('corerely.messenger_monitor.dashboard');
     }
