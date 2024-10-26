@@ -1,0 +1,155 @@
+{% extends "@CorerelyMessengerMonitor/base.html.twig" %}
+
+{% block content %}
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    Transport name
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Messegaes count
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for name, messagesCount in receiversInfo %}
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        {{ name }}
+                    </th>
+                    <td class="px-6 py-4">
+                        {{ messagesCount }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+
+    <blockquote class="p-4 my-4 border-s-4 border-gray-300 bg-gray-50 dark:border-gray-500 dark:bg-gray-800">
+        <p class="text-xl italic font-medium leading-relaxed text-gray-900 dark:text-white">Failed transport</p>
+    </blockquote>
+
+    {% for label, messages in app.flashes(['corerely.messenger_monitor.success', 'corerely.messenger_monitor.error']) %}
+        {% for message in messages %}
+            {% set color = label == 'corerely.messenger_monitor.success' ? 'green' : 'red' %}
+            <div class="p-4 mb-4 text-sm text-{{ color }}-800 rounded-lg bg-{{ color }}-50 dark:bg-gray-800 dark:text-{{ color }}-400 border border-{{ color }}-300"
+                 role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    ID
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Class
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Failed at
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Error
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Action
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for message in failedMessages %}
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        {{ message.id }}
+                    </th>
+                    <td class="px-6 py-4">
+                        {{ message.class }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {{ message.failedAt is empty ? '' : message.failedAt|date('Y-m-d H:i:s') }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ message.lastError }}
+
+                        {% if message.restOfErrors is not empty %}
+                            {% set bodyId = 'accordion-message-errors-body-' ~ message.id %}
+                            {% set headingId = 'accordion-message-errors-heading-' ~ message.id %}
+
+                            <h2 id="{{ headingId }}">
+                                <button
+                                        type="button"
+                                        class="group flex items-center mt-2 font-medium rtl:text-right text-gray-500 gap-3"
+                                        data-accordion-target="#{{ bodyId }}"
+                                        aria-expanded="false"
+                                        aria-controls="{{ bodyId }}"
+                                >
+                                    <span>Show more</span>
+                                    <svg data-accordion-icon
+                                         class="w-3 h-3 group-aria-expanded:rotate-0 rotate-180 shrink-0"
+                                         aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                         viewBox="0 0 10 6">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                              stroke-width="2" d="M9 5 5 1 1 5"/>
+                                    </svg>
+                                </button>
+                            </h2>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        <form action="{{ url('corerely.messenger_monitor.failed_message.retry', { id: message.id }) }}" method="post">
+                            <a href="javascript;" onclick="this.closest('form').submit()"
+                               class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Retry</a>
+                        </form>
+                        <a href="#" onclick="return confirm('Are you sure?')"
+                           class="font-medium text-red-600 dark:text-red-500 hover:underline">Reject</a>
+                    </td>
+                </tr>
+
+                {% if message.restOfErrors is not empty %}
+                    <tr id="{{ bodyId }}" aria-labelledby="{{ headingId }}"
+                        class="hidden bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                        <td colspan="3"></td>
+                        <td colspan="2" class="px-6 py-4 align-top">
+                            <div class="mt-2">
+                                <ul class="ps-5 text-gray-500 list-disc dark:text-gray-400">
+                                    {% for error in message.restOfErrors %}
+                                        <li>
+                                            <p class="mb-2 text-gray-500 dark:text-gray-400">{{ error }}</p>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
+
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Accordion
+        (function () {
+            const buttons = document.querySelectorAll('button[data-accordion-target]');
+
+            buttons.forEach(button => {
+                button.addEventListener(('click'), () => {
+                    const target = document.querySelector(button.getAttribute('data-accordion-target'));
+
+                    target.classList.toggle('hidden');
+                    button.setAttribute('aria-expanded', target.classList.contains('hidden') ? 'false' : 'true');
+                });
+            });
+        })();
+    </script>
+{% endblock %}

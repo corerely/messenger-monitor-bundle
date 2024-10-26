@@ -10,15 +10,25 @@ final readonly class FailedMessageRepository
     ) {
     }
 
+    public function get(int|string $id): FailedMessage
+    {
+        $envelope = $this->failureReceiverProvider->getFailureReceiver()->find($id);
+
+        return FailedMessage::fromEnvelope($envelope);
+    }
+
     /**
-     * @return iterable<FailedMessage>
+     * @return FailedMessage[]
      */
-    public function listFailedMessages(int $limit, bool $latestFirst = true): iterable
+    public function listFailedMessages(int $limit, bool $latestFirst = true): array
     {
         $envelopes = $this->failureReceiverProvider->getFailureReceiver()->all($limit);
 
-        /** @var FailedMessage[] $messages */
-        $messages = array_map(FailedMessage::fromEnvelope(...), iterator_to_array($envelopes));
+        $messages = [];
+
+        foreach ($envelopes as $envelope) {
+            $messages[] = FailedMessage::fromEnvelope($envelope);
+        }
 
         if ($latestFirst) {
             $messages = array_reverse($messages);

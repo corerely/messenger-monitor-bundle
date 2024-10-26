@@ -28,4 +28,9 @@ final readonly class FailureReceiverProvider
 
         return $failureReceiver;
     }
+
+    public function getFailureReceiverName(): ?string
+    {
+        return $this->failureReceiverName;
+    }
 }
