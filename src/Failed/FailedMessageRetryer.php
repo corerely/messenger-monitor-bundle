@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Corerely\MessengerMonitorBundle\Failed;
 
@@ -34,7 +35,7 @@ final readonly class FailedMessageRetryer
         $this->eventDispatcher->addSubscriber($subscriber = new StopWorkerOnMessageLimitListener(1));
 
         $failedRetryError = null;
-        $listener = function (WorkerMessageFailedEvent $messageReceivedEvent) use (&$failedRetryError): void {
+        $listener = static function (WorkerMessageFailedEvent $messageReceivedEvent) use (&$failedRetryError): void {
             $errorStamp = $messageReceivedEvent->getEnvelope()->last(ErrorDetailsStamp::class);
             $failedRetryError = $errorStamp?->getExceptionMessage();
         };

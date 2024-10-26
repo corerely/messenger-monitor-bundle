@@ -22,7 +22,6 @@ abstract class MessengerMonitorController extends AbstractController
     public function dashboard(
         #[Autowire(service: 'corerely.messenger_monitor_bundle.receiver_locator')]
         ReceiverLocator         $receiverLocator,
-
         #[Autowire(service: 'corerely.messenger_monitor_bundle.failed_message_repository')]
         FailedMessageRepository $failedMessageRepository,
     ): Response {
@@ -44,7 +43,6 @@ abstract class MessengerMonitorController extends AbstractController
     public function retry(
         string               $id,
         RequestStack         $requestStack,
-
         #[Autowire(service: 'corerely.messenger_monitor_bundle.failed_message_retryer')]
         FailedMessageRetryer $failedMessageRetryer,
     ): Response {
@@ -65,7 +63,6 @@ abstract class MessengerMonitorController extends AbstractController
     public function reject(
         string               $id,
         RequestStack         $requestStack,
-
         #[Autowire(service: 'corerely.messenger_monitor_bundle.failed_message_retryer')]
         FailedMessageRetryer $failedMessageRetryer,
     ): Response {

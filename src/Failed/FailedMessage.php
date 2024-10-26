@@ -44,7 +44,7 @@ final readonly class FailedMessage
             $envelope->getMessage()::class,
             $redeliveryStamp?->getRedeliveredAt(),
             array_map(
-                fn(ErrorDetailsStamp $error) => $error->getExceptionMessage(),
+                static fn(ErrorDetailsStamp $error) => $error->getExceptionMessage(),
                 $errors,
             ),
         );
