@@ -24,11 +24,28 @@ final readonly class FailedMessageRepository
     {
         $envelopes = $this->failureReceiverProvider->getFailureReceiver()->all($limit);
 
+        if (is_array($envelopes)) {
+            $envelopes = new \ArrayIterator($envelopes);
+        }
+
         $messages = [];
 
-        foreach ($envelopes as $envelope) {
-            $messages[] = FailedMessage::fromEnvelope($envelope);
-        }
+        do {
+            try {
+                $envelope = $envelopes->current();
+                $envelopes->next();
+
+                $messages[] = FailedMessage::fromEnvelope($envelope);
+            } catch (\Throwable $e) {
+                $messages[] = new FailedMessage(
+                    id: null,
+                    class: null,
+                    failedAt: null,
+                    errors: [$e->getMessage()],
+                );
+            }
+
+        } while ($envelopes->valid());
 
         if ($latestFirst) {
             $messages = array_reverse($messages);
