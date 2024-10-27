@@ -69,13 +69,13 @@
             {% for message in failedMessages %}
                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {{ message.id }}
+                        {{ message.id|default('--') }}
                     </th>
                     <td class="px-6 py-4">
-                        {{ message.class }}
+                        {{ message.class|default('--') }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        {{ message.failedAt is empty ? '' : message.failedAt|date('Y-m-d H:i:s') }}
+                        {{ message.failedAt is empty ? '--' : message.failedAt|date('Y-m-d H:i:s') }}
                     </td>
                     <td class="px-6 py-4">
                         {{ message.lastError }}
@@ -105,14 +105,16 @@
                         {% endif %}
                     </td>
                     <td class="px-6 py-4">
-                        <form action="{{ url('corerely.messenger_monitor.failed_message.retry', { id: message.id }) }}" method="post">
-                            <a href="javascript:{}" onclick="this.closest('form').submit()"
-                               class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Retry</a>
-                        </form>
-                        <form action="{{ url('corerely.messenger_monitor.failed_message.reject', { id: message.id }) }}" method="post">
-                            <a href="javascript:{}" onclick="return confirm('Are you sure?') ? this.closest('form').submit() : false"
-                               class="font-medium text-red-600 dark:text-red-500 hover:underline">Reject</a>
-                        </form>
+                        {% if message.id is not empty %}
+                            <form action="{{ url('corerely.messenger_monitor.failed_message.retry', { id: message.id }) }}" method="post">
+                                <a href="javascript:{}" onclick="this.closest('form').submit()"
+                                   class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Retry</a>
+                            </form>
+                            <form action="{{ url('corerely.messenger_monitor.failed_message.reject', { id: message.id }) }}" method="post">
+                                <a href="javascript:{}" onclick="return confirm('Are you sure?') ? this.closest('form').submit() : false"
+                                   class="font-medium text-red-600 dark:text-red-500 hover:underline">Reject</a>
+                            </form>
+                        {% endif %}
                     </td>
                 </tr>
 

@@ -13,7 +13,7 @@ final readonly class FailedMessage
 
     public function __construct(
         public int|string|null     $id,
-        public string              $class,
+        public ?string             $class,
         public ?\DateTimeInterface $failedAt,
         public array               $errors,
     ) {
