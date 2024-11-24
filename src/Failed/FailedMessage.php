@@ -15,6 +15,7 @@ final readonly class FailedMessage
         public int|string|null     $id,
         public ?string             $class,
         public ?\DateTimeInterface $failedAt,
+        public array               $objectVars,
         public array               $errors,
     ) {
     }
@@ -39,10 +40,13 @@ final readonly class FailedMessage
         /** @var RedeliveryStamp|null $redeliveryStamp */
         $redeliveryStamp = $envelope->last(RedeliveryStamp::class);
 
+        $message = $envelope->getMessage();
+
         return new self(
             $transportMessageStamp?->getId(),
-            $envelope->getMessage()::class,
+            $message::class,
             $redeliveryStamp?->getRedeliveredAt(),
+            get_object_vars($message),
             array_map(
                 static fn(ErrorDetailsStamp $error) => $error->getExceptionMessage(),
                 $errors,

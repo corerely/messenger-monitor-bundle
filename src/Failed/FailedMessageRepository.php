@@ -41,6 +41,7 @@ final readonly class FailedMessageRepository
                     id: null,
                     class: null,
                     failedAt: null,
+                    objectVars: [],
                     errors: [$e->getMessage()],
                 );
             }
