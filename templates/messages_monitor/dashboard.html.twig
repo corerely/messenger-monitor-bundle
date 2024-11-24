@@ -67,12 +67,19 @@
             </thead>
             <tbody>
             {% for message in failedMessages %}
+                {% set bodyId = 'accordion-message-errors-body-' ~ message.id %}
+                {% set headingId = 'accordion-message-errors-heading-' ~ message.id %}
+
                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {{ message.id|default('--') }}
                     </th>
                     <td class="px-6 py-4">
                         {{ message.class|default('--') }}
+
+                        {% if message.objectVars %}
+                            {% include '@CorerelyMessengerMonitor/messages_monitor/_show_more_button.html.twig' %}
+                        {% endif %}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         {{ message.failedAt is empty ? '--' : message.failedAt|date('Y-m-d H:i:s') }}
@@ -81,27 +88,7 @@
                         {{ message.lastError }}
 
                         {% if message.restOfErrors is not empty %}
-                            {% set bodyId = 'accordion-message-errors-body-' ~ message.id %}
-                            {% set headingId = 'accordion-message-errors-heading-' ~ message.id %}
-
-                            <h2 id="{{ headingId }}">
-                                <button
-                                        type="button"
-                                        class="group flex items-center mt-2 font-medium rtl:text-right text-gray-500 gap-3"
-                                        data-accordion-target="#{{ bodyId }}"
-                                        aria-expanded="false"
-                                        aria-controls="{{ bodyId }}"
-                                >
-                                    <span>Show more</span>
-                                    <svg data-accordion-icon
-                                         class="w-3 h-3 group-aria-expanded:rotate-0 rotate-180 shrink-0"
-                                         aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                         viewBox="0 0 10 6">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                              stroke-width="2" d="M9 5 5 1 1 5"/>
-                                    </svg>
-                                </button>
-                            </h2>
+                            {% include '@CorerelyMessengerMonitor/messages_monitor/_show_more_button.html.twig' %}
                         {% endif %}
                     </td>
                     <td class="px-6 py-4">
@@ -118,24 +105,23 @@
                     </td>
                 </tr>
 
-                {% if message.restOfErrors is not empty %}
-                    <tr id="{{ bodyId }}" aria-labelledby="{{ headingId }}"
-                        class="hidden bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <td colspan="3"></td>
-                        <td colspan="2" class="px-6 py-4 align-top">
-                            <div class="mt-2">
-                                <ul class="ps-5 text-gray-500 list-disc dark:text-gray-400">
-                                    {% for error in message.restOfErrors %}
-                                        <li>
-                                            <p class="mb-2 text-gray-500 dark:text-gray-400">{{ error }}</p>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                {% endif %}
-
+                <tr id="{{ bodyId }}" aria-labelledby="{{ headingId }}"
+                    class="hidden bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <td colspan="3" class="px-6 py-4 align-top">
+                        <pre>{{ message.objectVars|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+                    </td>
+                    <td colspan="2" class="px-6 py-4 align-top">
+                        <div class="mt-2">
+                            <ul class="ps-5 text-gray-500 list-disc dark:text-gray-400">
+                                {% for error in message.restOfErrors %}
+                                    <li>
+                                        <p class="mb-2 text-gray-500 dark:text-gray-400">{{ error }}</p>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
             {% endfor %}
             </tbody>
         </table>
